@@ -17,7 +17,8 @@ cursor = sql_connector.cursor()
 # THIS WORKS
 def add_row(data_list):
     try:
-        cursor.execute("INSERT INTO data VALUES " + str(data_list))
+        query = "INSERT INTO data (name, a_sub, b_sub) VALUES (%s, %s, %s)"
+        cursor.execute(query, data_list)
         sql_connector.commit() # This makes changes permanent
     except mysql.connector.errors.ProgrammingError:
         return "Row execution failed."
@@ -33,9 +34,12 @@ def calculate_percentage(data_point, item):
         sum += element[0]
     return sum / total
 
-#In[2]
+add_row(("Michael", 0, 1))
+print(calculate_percentage('a_sub', "'Michael'"))
 
-#This is where the functions are called.
+# In[2]
+
+# This is where the functions are called.
 app = Flask(__name__)
 
 # THIS WORKS.
@@ -58,17 +62,17 @@ def calculate_data_points():
     else:
         a_sub = 0
         b_sub = 1
-    add_row(("'" + submission_name + "'", a_sub, b_sub))
-    return redirect(url_for('submission', data=calculate_percentage(submission_name, 'a_sub')))
+    add_row((submission_name, a_sub, b_sub))
+    return redirect(url_for('submission', data=calculate_percentage("'" + submission_name + "'", 'a_sub')))
 
 if __name__ == '__main__':
-    app.run(debug = True, port = 5500)
+    app.run(debug = True)
 
 #In[3]
 
 # def calculate_average(data_point, item):
 # def calculate_stdv(data_point, item):
 # These are good to have, but they aren't really nessecary for a full MVP in this case. 
-# Remember when calling add_row to put '' around strings.
+# Remember when calling calculate_percentage to put '' around strings.
 
 #In[4]
