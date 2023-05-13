@@ -6,3 +6,5 @@ function getAndSendData(e){
 
 let submitButton = document.querySelector("input[name=submit-button]");
 submitButton.addEventListener('click', getAndSendData());
+
+//this one is redundant.
