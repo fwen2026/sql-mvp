@@ -58,11 +58,11 @@ def calculate_data_points():
     else:
         a_sub = 0
         b_sub = 1
-    add_row((submission_name, a_sub, b_sub))
+    add_row(("'" + submission_name + "'", a_sub, b_sub))
     return redirect(url_for('submission', data=calculate_percentage(submission_name, 'a_sub')))
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True, port = 5500)
 
 #In[3]
 
