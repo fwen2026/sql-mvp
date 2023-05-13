@@ -52,7 +52,7 @@ def submission():
 
 # THIS MAYBE WORKS???
 # Fetches data, calculates values.
-@app.route('/index',methods = ['POST'])
+@app.route('/index.html',methods = ['POST'])
 def calculate_data_points():
     submission_name = request.form['name']
     submission_ab = request.form['form-tester']
@@ -63,7 +63,7 @@ def calculate_data_points():
         a_sub = 0
         b_sub = 1
     add_row((submission_name, a_sub, b_sub))
-    return redirect(url_for('submission', data=calculate_percentage("'" + submission_name + "'", 'a_sub')))
+    return redirect(url_for('submission', data=calculate_percentage('a_sub', "'" + submission_name + "'")))
 
 if __name__ == '__main__':
     app.run(debug = True)
