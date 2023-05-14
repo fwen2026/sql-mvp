@@ -4,7 +4,7 @@ from flask import Flask, redirect, request, url_for
 
 #In[1]
 
-# Connects to the server. The actual root password is on here.
+# Connects (establishes one) to the server. The actual root password is on here.
 sql_connector = mysql.connector.connect(host='localhost',
                         database='submission_data',
                         user='root',
@@ -50,7 +50,7 @@ def submission():
     return 'Percentage of %s' % data
 
 
-# THIS MAYBE WORKS???
+# THIS WORKS
 # Fetches data, calculates values.
 @app.route('/index.html',methods = ['POST'])
 def calculate_data_points():
