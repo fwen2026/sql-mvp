@@ -1,20 +1,21 @@
 import mysql.connector
 import pandas as pd
 from flask import Flask, redirect, request, url_for
+import statistics
 
 #In[1]
-
 # Connects (establishes one) to the server. The actual root password is on here.
+
 sql_connector = mysql.connector.connect(host='localhost',
                         database='submission_data',
                         user='root',
-                        password='Technoblade!1') # This is the actual password, so keep it secret.
+                        password='Technoblade!1')
 
 
 cursor = sql_connector.cursor()
 
+
 # These are all just methods to calculate values.
-# THIS WORKS
 def add_row(data_list):
     try:
         query = "INSERT INTO data (name, a_sub, b_sub) VALUES (%s, %s, %s)"
@@ -23,7 +24,7 @@ def add_row(data_list):
     except mysql.connector.errors.ProgrammingError:
         return "Row execution failed."
 
-# THIS WORKS
+
 def calculate_percentage(data_point, item):
     cursor.execute("SELECT " + data_point + " FROM data WHERE name =" + item)
     data_list = cursor.fetchall()
@@ -32,25 +33,37 @@ def calculate_percentage(data_point, item):
     for element in data_list:
         total += 1.0
         sum += element[0]
-    return sum / total
+    return (sum / total) * 100
 
-add_row(("Michael", 0, 1))
-print(calculate_percentage('a_sub', "'Michael'"))
+def calculate_stdv(data_point, item):
+    cursor.execute("SELECT " + data_point + " FROM data WHERE name =" + item)
+    data_list = cursor.fetchall()
+    data_in_listform = []
+    for element in data_list:
+        data_in_listform.append(element[0])
+    return statistics.stdev(data_in_listform)
+
+def calculate_average(data_point, item):
+    cursor.execute("SELECT " + data_point + " FROM data WHERE name =" + item)
+    data_list = cursor.fetchall()
+    data_in_listform = []
+    for element in data_list:
+        data_in_listform.append(element[0])
+    return statistics.mean(data_in_listform)
+
 
 # In[2]
-
-# This is where the functions are called.
+# This entire is where the functions are called.
 app = Flask(__name__)
 
-# THIS WORKS.
+
 # Publishes data to the interface.
 @app.route('/submission/')
 def submission():
     data = request.args.get('data')
-    return 'Percentage of %s' % data
+    return 'Percentage of a-submissions for this user is %s' % data + '%'
 
 
-# THIS WORKS
 # Fetches data, calculates values.
 @app.route('/index.html',methods = ['POST'])
 def calculate_data_points():
@@ -65,14 +78,6 @@ def calculate_data_points():
     add_row((submission_name, a_sub, b_sub))
     return redirect(url_for('submission', data=calculate_percentage('a_sub', "'" + submission_name + "'")))
 
+
 if __name__ == '__main__':
     app.run(debug = True)
-
-#In[3]
-
-# def calculate_average(data_point, item):
-# def calculate_stdv(data_point, item):
-# These are good to have, but they aren't really nessecary for a full MVP in this case. 
-# Remember when calling calculate_percentage to put '' around strings.
-
-#In[4]
