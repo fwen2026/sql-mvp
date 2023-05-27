@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, render_template
 import statistics
 import os
 
@@ -71,7 +71,7 @@ def submission():
 
 
 # Fetches data, calculates values.
-@app.route('/index.html',methods = ['POST'])
+@app.route('/index.html',methods = ['GET', 'POST'])
 def calculate_data_points():
     submission_name = request.form['name']
     submission_ab = request.form['form-tester']
@@ -87,7 +87,7 @@ def calculate_data_points():
     tuple_data = (calculate_percentage('a_sub', "'" + submission_name + "'"), 
                 calculate_stdv('integer_sub', "'" + submission_name + "'"),
                 calculate_average('integer_sub', "'" + submission_name + "'"))
-    return redirect(url_for('submission', data=tuple_data))
+    return redirect(url_for('submission', data=','.join(tuple_data)))
 
 
 if __name__ == '__main__':
