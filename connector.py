@@ -24,11 +24,12 @@ def add_row(data_list):
         cursor.execute(query, data_list)
         sql_connector.commit() 
     except mysql.connector.errors.ProgrammingError:
-        return "Row execution failed."
+        print("Row execution failed.")
+        return
 
 
 def calculate_percentage(data_point, item):
-    cursor.execute("SELECT " + data_point + " FROM submissiondata WHERE name =" + item) #TODO: Add sql average
+    cursor.execute("SELECT " + data_point + " FROM submissiondata WHERE name =" + item) #TODO: Add sql percentages
     data_list = cursor.fetchall()
     total = 0.0
     sum = 0.0
@@ -66,8 +67,7 @@ app = Flask(__name__)
 @app.route('/submission/')
 def submission():
     data = request.args.get('data')
-    percentage, stdv, average = data.split(",")
-    return 'Stats for this user are: Percentage of A: %s, Value STDV: %s, Value Average: %s' % (percentage, stdv, average)
+    return 'Stats for this user are: %s' % data
 
 
 # Fetches data, calculates values.
@@ -87,7 +87,7 @@ def calculate_data_points():
     tuple_data = (calculate_percentage('a_sub', "'" + submission_name + "'"), 
                 calculate_stdv('integer_sub', "'" + submission_name + "'"),
                 calculate_average('integer_sub', "'" + submission_name + "'"))
-    return redirect(url_for('submission', data=','.join(tuple_data)))
+    return redirect(url_for('submission', data=tuple_data))
 
 
 if __name__ == '__main__':
