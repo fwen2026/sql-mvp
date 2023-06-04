@@ -66,8 +66,8 @@ app = Flask(__name__)
 # Publishes data to the interface.
 @app.route('/submission/')
 def submission():
-    data = request.args.get('data')
-    return 'Stats for this user are: %s' % data
+    data = (request.args.get('perc'), request.args.get('stdv'), request.args.get('avg'))
+    return 'Stats for this user are: %s' % str(data)
 
 
 # Fetches data, calculates values.
@@ -87,7 +87,7 @@ def calculate_data_points():
     tuple_data = (calculate_percentage('a_sub', "'" + submission_name + "'"), 
                 calculate_stdv('integer_sub', "'" + submission_name + "'"),
                 calculate_average('integer_sub', "'" + submission_name + "'"))
-    return redirect(url_for('submission', data=tuple_data))
+    return redirect(url_for('submission', perc=tuple_data[0], stdv=tuple_data[1], avg=tuple_data[2]))
 
 
 if __name__ == '__main__':
