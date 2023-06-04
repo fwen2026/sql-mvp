@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVP Proof of Concept Form</title>
+</head>
+<body>
+    <form action="http://localhost:5000/index.html" method="POST">
+        <label for="name">
+            Enter your name:
+        </label>
+        <input type="text" id="name" name="name">
+        <br>
+        <label>
+            Choose Option A or Option B.
+        </label>
+        <br>
+        <div>
+            <input type="radio" id="option-a" name="form-tester" value="A">
+            <label for="a_sub"> A </label>
+            <br>
+            <input type="radio" id="option-b" name="form-tester" value="B">
+            <label for="b_sub"> B</label>
+        </div>
+        <br>
+        <div>
+            <label for="number">
+                Enter a number of your choice:
+            </label>
+            <input type="text" id="number" name="number" min="1" max="9999">
+        </div>
+        <br>
+        <button id="submit" type="submit">Submit</button>
+    </form>
+</body>
+</html>
