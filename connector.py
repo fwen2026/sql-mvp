@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, redirect, request, url_for, render_template
+from flask import Flask, redirect, request, url_for
 import statistics
 import os
 
@@ -59,19 +59,19 @@ def calculate_average(data_point, item):
 
 
 # In[2]
-# This entire is where the functions are called.
+#Flask
 app = Flask(__name__)
 
 
 # Publishes data to the interface.
-@app.route('/submission/')
+@app.route('/submission')
 def submission():
     data = (request.args.get('perc'), request.args.get('stdv'), request.args.get('avg'))
     return 'Stats for this user are: %s' % str(data)
 
 
 # Fetches data, calculates values.
-@app.route('/index.html',methods = ['GET', 'POST'])
+@app.route('/index.html', methods = ['GET', 'POST'])
 def calculate_data_points():
     submission_name = request.form['name']
     submission_ab = request.form['form-tester']
@@ -83,7 +83,6 @@ def calculate_data_points():
         b_sub = 1
     submission_int = request.form['number']
     add_row((submission_name, a_sub, b_sub, submission_int))
-    indices = ("a", "avg", "stdv")
     tuple_data = (calculate_percentage('a_sub', "'" + submission_name + "'"), 
                 calculate_stdv('integer_sub', "'" + submission_name + "'"),
                 calculate_average('integer_sub', "'" + submission_name + "'"))
