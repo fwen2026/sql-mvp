@@ -64,14 +64,14 @@ app = Flask(__name__)
 
 
 # Publishes data to the interface.
-@app.route('/submission')
+@app.route('/submission/')
 def submission():
     data = (request.args.get('perc'), request.args.get('stdv'), request.args.get('avg'))
     return 'Stats for this user are: %s' % str(data)
 
 
 # Fetches data, calculates values.
-@app.route('/index.html', methods = ['GET', 'POST'])
+@app.route('/index.html',methods= ['GET', 'POST'])
 def calculate_data_points():
     submission_name = request.form['name']
     submission_ab = request.form['form-tester']
