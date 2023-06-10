@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, render_template
 import statistics
 import os
 
@@ -67,7 +67,7 @@ app = Flask(__name__)
 @app.route('/submission/')
 def submission():
     data = (request.args.get('perc'), request.args.get('stdv'), request.args.get('avg'))
-    return 'Stats for this user are: %s' % str(data)
+    return render_template("interface.html", data=data)
 
 
 # Fetches data, calculates values.
