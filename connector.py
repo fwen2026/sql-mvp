@@ -24,10 +24,31 @@ def add_row(data_list):
         cursor.execute(query, data_list)
         sql_connector.commit() 
     except mysql.connector.errors.ProgrammingError:
-        print("Row execution failed.")
+        print("Row implementation failed.")
+        return
+    
+#TODO: Redundancy?
+def add_row_PerItem(data_list):
+    try:
+        cursor.execute("SELECT name FROM peritemdata") #TODO: ADD SQL FUNCTIONS
+        names = cursor.fetchall()
+        names_list = []
+        for element in names:
+            names_list.append(element)
+        if data_list[0] in names_list:
+            cursor.execute("UPDATE peritemdata")
+            query = "SET name = %s, a_perc = %s, avg_sub = %s, stdv_sub = %s" 
+            cursor.execute(query, data_list)
+            sql_connector.commit()
+        else:
+            query = "INSERT INTO peritemdata (name, a_perc, avg_sub, stdv_sub) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, data_list)
+        sql_connector.commit()
+    except mysql.connector.errors.ProgrammingError:
+        print("Update failed")
         return
 
-
+#PerTeamData name: peritemdata
 def calculate_percentage(data_point, item):
     cursor.execute("SELECT " + data_point + " FROM submissiondata WHERE name =" + item) #TODO: Add sql percentages
     data_list = cursor.fetchall()
@@ -62,7 +83,6 @@ def calculate_average(data_point, item):
 #Flask
 app = Flask(__name__)
 
-
 # Publishes data to the interface.
 @app.route('/submission/')
 def submission():
@@ -83,11 +103,14 @@ def calculate_data_points():
         b_sub = 1
     submission_int = request.form['number']
     add_row((submission_name, a_sub, b_sub, submission_int))
-    tuple_data = (calculate_percentage('a_sub', "'" + submission_name + "'"), 
-                calculate_stdv('integer_sub', "'" + submission_name + "'"),
-                calculate_average('integer_sub', "'" + submission_name + "'"))
-    return redirect(url_for('submission', perc=tuple_data[0], stdv=tuple_data[1], avg=tuple_data[2]))
+    tuple_data = (submission_name,
+                  calculate_percentage('a_sub', "'" + submission_name + "'"), 
+                  calculate_stdv('integer_sub', "'" + submission_name + "'"),
+                  calculate_average('integer_sub', "'" + submission_name + "'"))
+    add_row_PerItem(tuple_data)
+    return redirect(url_for('submission', perc=tuple_data[1], stdv=tuple_data[2], avg=tuple_data[3]))
 
+#TODO: add function to run when website loads. this should load prevoius data.
 
 if __name__ == '__main__':
     app.run(debug = True)

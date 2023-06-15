@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="main.js"></script>
     <title>interface</title>
 </head>
 <body>
     <h1>
         Form data for submission
     </h1>
-    <p>Percentage of "A" submissions: {{ data[0] }}</p>
+    <p>Percentage of "A" submissions: <div name="a">{{ data[0] }}</div></p>
     <p>Standard deviation of the integral submission: {{ data[1] }}</p>
     <p>Mean of integral submissions: {{ data[2] }}</p>
 </body>
