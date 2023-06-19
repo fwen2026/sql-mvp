@@ -1,7 +1,7 @@
 import mysql.connector
 from flask import Flask, redirect, request, url_for, render_template
 import statistics
-import os
+import json
 
 
 
@@ -28,7 +28,7 @@ def add_row(data_list):
         return
     
 #TODO: Redundancy?
-def add_row_PerItem(data_list):
+def modify_PerItem(data_list):
     try:
         cursor.execute("SELECT name FROM peritemdata") #TODO: ADD SQL FUNCTIONS
         names = cursor.fetchall()
@@ -78,6 +78,9 @@ def calculate_average(data_point, item):
         data_in_listform.append(element[0])
     return statistics.mean(data_in_listform)
 
+def get_names():
+    cursor.execute("SELECT from")
+
 
 # In[2]
 #Flask
@@ -90,7 +93,17 @@ def submission():
     return render_template("interface.html", data=data)
 
 
-# Fetches data, calculates values.
+@app.route('/get_data/<name>')
+def load_data(name):
+    raw_data_list = cursor.execute('SELECT a_perc, avg_sub, stdv_sub FROM peritemdata WHERE name=' + name)
+    processed_data = []
+    for element in raw_data_list:
+        processed_data.append(element[0])
+    return json.dumps(processed_data)
+    #load into website placeholders
+
+
+# Fetches data, calculates values, caches in PerItemData
 @app.route('/index.html',methods= ['GET', 'POST'])
 def calculate_data_points():
     submission_name = request.form['name']
@@ -107,8 +120,8 @@ def calculate_data_points():
                   calculate_percentage('a_sub', "'" + submission_name + "'"), 
                   calculate_stdv('integer_sub', "'" + submission_name + "'"),
                   calculate_average('integer_sub', "'" + submission_name + "'"))
-    add_row_PerItem(tuple_data)
-    return redirect(url_for('submission', perc=tuple_data[1], stdv=tuple_data[2], avg=tuple_data[3]))
+    modify_PerItem(tuple_data)
+    return render_template('index.html')
 
 #TODO: add function to run when website loads. this should load prevoius data.
 
